@@ -1,0 +1,25 @@
+[project]
+name = "deep-cuneiform"
+version = "0.1.0"
+description = "DeepSeek-OCR fine-tuned on untranslated Sumerian tablets"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.4.0",
+    "unsloth[cu124]",
+    "vllm>=0.6.0",
+    "gradio>=4.0",
+    "pillow",
+    "huggingface-hub",
+    "datasets",
+    "transformers",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "jupyter",
+    "matplotlib",
+    "seaborn",
+]
+
+[tool.uv.sources]
+unsloth = { git = "https://github.com/unslothai/unsloth.git" }

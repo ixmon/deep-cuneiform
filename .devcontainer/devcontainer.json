@@ -1,0 +1,6 @@
+{
+  "name": "deep-cuneiform",
+  "image": "nvidia/cuda:12.4.1-devel-ubuntu22.04",
+  "runArgs": ["--gpus", "all"],
+  "postCreateCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && uv sync"
+}
