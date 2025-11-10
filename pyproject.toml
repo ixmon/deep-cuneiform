@@ -2,19 +2,29 @@
 name = "deep-cuneiform"
 version = "0.1.0"
 description = "DeepSeek-OCR fine-tuned on untranslated Sumerian tablets"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.14"
 dependencies = [
-    "torch>=2.4.0",
-    "unsloth[cu124]",
-    "vllm>=0.6.0",
+    "torch==2.2.2",
+    "torchvision==0.17.2",
+    "unsloth",
+    # "vllm>=0.6.0",  # Commented out due to transformers version conflicts
     "gradio>=4.0",
     "pillow",
     "huggingface-hub",
     "datasets",
-    "transformers",
+    "transformers==4.36.2",
+    "peft==0.4.0",
+    "trl==0.7.4",
+    "addict",
+    "easydict",
+    "einops",
+    "requests",
+    "markdown",
+    "beautifulsoup4",
 ]
 
 [tool.uv]
+required-environments = ["sys_platform == 'linux' and platform_machine != 'aarch64'"]
 dev-dependencies = [
     "jupyter",
     "matplotlib",

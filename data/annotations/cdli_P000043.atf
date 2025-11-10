@@ -1,0 +1,79 @@
+&P000035 = CDLI Lexical 000013, ex. 008
+#atf: lang qpc 
+@tablet 
+@obverse 
+$ beginning broken 
+@column 1' 
+$ beginning broken 
+1'. [1(N01)] , [...] KU6~a# 
+>>Q000013 019 
+2'. [1(N01)] , [...] KU6~a 
+>>Q000013 020 
+3'. [1(N01)] , 1(N02)# KU6~a 
+>>Q000013 021 
+4'. 1(N01) , DUR2 KU6~a 
+>>Q000013 022 
+5'. [1(N01)] , [...] GIR~b#? 
+>>Q000013 023 
+$ rest broken 
+@column 2' 
+$ beginning broken 
+1'. [1(N01)] , [...] KU6~a# 
+>>Q000013 030 
+2'. 1(N01) , ME~a KU6~a [...] 
+>>Q000013 031 
+3'. 1(N01) , [...] X KU6~a 
+>>Q000013 032 
+4'. 1(N01) , MUL# KU6~a# 
+>>Q000013 033 
+5'. 1(N01) , AB~a KU6~a 
+>>Q000013 034 
+6'. 1(N01) , PAD~b#? KU6~a 
+>>Q000013 036 
+7'. 1(N01) , SUKUD@g~b 
+>>Q000013 037 
+8'. [1(N01)] , X KU6~a# 
+>>Q000013 038 
+$ rest broken 
+@column 3' 
+$ beginning broken 
+1'. [1(N01)] , [...] 
+>>Q000013 041 
+2'. 1(N01) , TU~b KU6~a 
+>>Q000013 042 
+3'. 1(N01) , |KU6~a+KU6~a|# 
+>>Q000013 043 
+4'. 1(N01) , GIR~b 
+>>Q000013 044 
+5'. 1(N01) , KA~a KU6~a 
+>>Q000013 045 
+6'. 1(N01) , GESZTU~a? KU6~a 
+>>Q000013 046 
+7'. 1(N01) , SUHUR# 
+>>Q000013 047 
+8'. 1(N01) , U2~b MUSZEN# [...] 
+>>Q000013 048 
+9'. [1(N01)] , [...] 
+>>Q000013 049 
+$ rest broken 
+@column 4' 
+$ beginning broken 
+1'. [1(N01)] , X [...] 
+>>Q000013 091 
+2'. 1(N01) , X 
+>>Q000013 092 
+3'. 1(N01) , |ZATU759xKU6~a|#? 
+>>Q000013 093 
+4'. 1(N01) , |GA2~a1xHI|# 
+>>Q000013 094 
+5'. 1(N01) , |GA2~a1xSUHUR|# 
+>>Q000013 095 
+6'. 1(N01) , |GA2~a1xX|# 
+>>Q000013 096 
+7'. 1(N01) , [...] 
+>>Q000013 097 
+$ rest broken 
+@reverse 
+1. [N] , NUN~a NAM2 [...] 
+>>Q000013 colophon 
+ 

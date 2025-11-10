@@ -1,0 +1,28 @@
+&P000056 = CDLI Lexical 000023, ex. 086 
+#atf: lang qpc 
+@tablet 
+@obverse 
+$ beginning broken 
+@column 1' 
+$ beginning broken 
+1'. [1(N01)] , [...] 
+>>Q000023 n 
+2'. 1(N01)# , [...] X 
+>>Q000023 n 
+3'. 1(N01)# , |DUG~bxX|# 
+>>Q000023 n 
+4'. 1(N01)# , |DUG~bxX|# 
+>>Q000023 n 
+$ rest broken 
+@column 2 
+1'. [1(N01)] , [...] 
+>>Q000023 n 
+2'. 1(N01)# , |DUG~bxX|# 
+>>Q000023 n 
+3'. 1(N01)# , [...] 
+>>Q000023 n 
+$ rest broken 
+@reverse 
+1. [N] , [...] 
+>>Q000023 colophon 
+

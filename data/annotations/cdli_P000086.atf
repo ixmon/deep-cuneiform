@@ -1,0 +1,30 @@
+&P000073 = CDLI Lexical 000023, ex. 019 
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ beginning broken 
+1'. 1(N01)# , SZAKIR~c# 
+>>Q000023 005 
+2'. 1(N01) , MUD3~a 
+>>Q000023 006 
+3'. 1(N01) , LAHTAN2 
+>>Q000023 007 
+4'. 1(N01) , KISIM~b 
+>>Q000023 008 
+5'. 1(N01)# , NI~b 
+>>Q000023 009 
+$ rest broken 
+@column 2 
+$ beginning broken 
+1'. 1(N01)# , [...] 
+>>Q000023 n 
+2'. 1(N01)# , [...] 
+>>Q000023 n 
+3'. 1(N01)# , [...] 
+>>Q000023 n 
+$ rest broken 
+@reverse 
+1. 1(N34) [...] , X [...] 
+>>Q000023 colophon 
+

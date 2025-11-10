@@ -1,0 +1,29 @@
+&P000087 = CDLI Lexical 000002, ex. 116
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ broken 
+@column 2 
+$ beginning broken 
+1'. 1(N01) , [...] |ZATU737xDI|#? 
+>>Q000002 041 
+2'. 1(N01) , SANGA~a# |ZATU737xU4|# 
+>>Q000002 042 
+3'. 1(N01) , SANGA~a# |ZATU737xSAL| 
+>>Q000002 043 
+@column 3 
+$ beginning broken 
+1'. 1(N01) , [...] 
+>>Q000002 055 
+2'. 1(N01) , X [...] 
+>>Q000002 056 
+3'. 1(N01) , LAGAR~a# [...] 
+>>Q000002 057 
+4'. 1(N01) , MUSZ3~a# [...] 
+>>Q000002 058 
+$ rest broken 
+@reverse 
+1. [N] , [...] 
+>>Q000002 colophon  
+

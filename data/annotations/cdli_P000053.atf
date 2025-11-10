@@ -1,0 +1,32 @@
+&P000042 = CDLI Lexical 000022, ex. 01 
+#atf: lang qpc 
+@tablet 
+@tablet 
+@obverse 
+$ beginning broken 
+@column 1' 
+$ broken 
+@column 2' 
+$ beginning broken 
+1'. [1(N01)] , GISZ# NU11# 
+>>Q000022 002 
+2'. 1(N01) , KIN2~c#? 
+>>Q000022 003 
+3'. 1(N01) , [...] 
+>>Q000022 004 
+$ rest broken 
+@column 3 
+$ beginning broken 
+1'. [1(N01)] , GISZ# [...] 
+>>Q000022 043 
+2'. 1(N01) , GISZ X 
+>>Q000022 044 
+3'. 1(N01) , IN~b [...] 
+>>Q000022 045 
+4'. 1(N01) , [...] 
+>>Q000022 046 
+$ rest broken 
+@reverse 
+1. [N] , [...] 
+>>Q000022 colophon 
+

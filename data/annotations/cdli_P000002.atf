@@ -1,0 +1,31 @@
+&P000002 = CDLI Lexical 000002, ex. 066
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ beginning broken 
+1'. [1(N01)] , [...] 
+>>Q000002 013 
+2'. [1(N01)] , GAL~a# SZITA~a1 
+>>Q000002 014 
+3'. [1(N01)] , ABGAL# 
+>>Q000002 015 
+$ rest broken 
+@column 2 
+$ beginning broken 
+1'. [1(N01)] , [...] NIM~a#? 
+>>Q000002 023 
+2'. 1(N01) , GAL~a SILA4~b 
+>>Q000002 024 
+3'. 1(N01) , GAL~a SZAB~a 
+>>Q000002 025 
+$ rest broken 
+@column 3 
+$ beginning broken 
+1'. [1(N01)] , [...] 
+>>Q000002 n 
+$ rest broken 
+@reverse 
+1. [N] , [...] 
+>>Q000002 colophon 
+ 

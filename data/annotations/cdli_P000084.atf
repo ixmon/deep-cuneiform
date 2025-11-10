@@ -1,0 +1,21 @@
+&P000071 = CDLI Lexical 000002, ex. 019
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+1. [1(N01)] , [...] 
+>>Q000002 001 
+2. 1(N01) , [...] KAB# 
+>>Q000002 002 
+3. 1(N01) , NAM2 DI# 
+>>Q000002 003 
+4. 1(N01) , NAM2 NAM2 
+>>Q000002 004 
+5. 1(N01) , NAM2 URU~a1 
+>>Q000002 005 
+6. 1(N01) , [...] 
+>>Q000002 006 
+$ rest broken 
+@reverse 
+1. [N] , [...] 
+>>Q000002 colophon 

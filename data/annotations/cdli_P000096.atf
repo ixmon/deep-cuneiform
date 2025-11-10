@@ -1,0 +1,18 @@
+&P000082 = CDLI Lexical 000002, ex. 080
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ broken 
+@column 2 
+1. 1(N01) , [...] NIM~a 
+>>Q000002 023 
+2. 1(N01) , GAL~a SILA4~b#? 
+>>Q000002 024 
+3. 1(N01) , [...] SZAB~a# 
+>>Q000002 025 
+$ rest broken 
+@reverse 
+1. [N] , [...] 
+>>Q000002 colophon  
+

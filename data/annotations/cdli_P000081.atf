@@ -1,0 +1,39 @@
+&P000068 = CDLI Lexical 000030, ex. 13 
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ beginning broken 
+1'. [N] , [...] 
+>>Q000022 n 
+@column 2 
+$ beginning broken 
+1'. [N] , [...] 
+>>Q000030 008 
+2'. [N] , GUKKAL~c# 
+>>Q000030 009 
+3'. 1(N01) , KAL~a AB2 
+>>Q000030 010 
+4'. 1(N01) , GA~b AMAR 
+>>Q000030 011 
+5'. 1(N14) , SUHUR 
+>>Q000030 012 
+6'. 1(N14) , KAR2~b# 
+>>Q000030 013 
+7'. 3(N01) , KAD4~a# 
+>>Q000030 014 
+8'. [N] , [...] 
+>>Q000030 015 
+@column 3 
+$ beginning broken 
+1'. [N] , [...] 
+>>Q000030 022 
+2'. 1(N01) , [...] 
+>>Q000030 023 
+3'. 1(N14) , UD5~a# 
+>>Q000030 024 
+$ rest broken 
+@reverse 
+1. [N] , [...] 
+>>Q000030 colophon 
+

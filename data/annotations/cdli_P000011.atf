@@ -1,0 +1,79 @@
+&P000011 = CDLI Lexical 000002, ex. 017 & 000026, ex. 054
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ beginning broken 
+1'. 1(N01) , NAM2# DI 
+>>Q000002 003 
+2'. 1(N01) , NAM2 NAM2 
+>>Q000002 004 
+3'. 1(N01) , NAM2 URU~a1 
+>>Q000002 005 
+4'. 1(N01) , NAM2 ERIN 
+>>Q000002 006 
+5'. 1(N01) , GAL~a SZUBUR# 
+>>Q000002 007 
+6'. 1(N01) , [...] 
+>>Q000002 008 
+$ rest broken 
+@column 2 
+$ beginning broken 
+1'. 1(N01) , ABGAL# 
+>>Q000002 015 
+2'. 1(N01) , KINGAL# 
+>>Q000002 016 
+3'. 1(N01) , GAL~a TE 
+>>Q000002 017 
+4'. 1(N01) , GAL~a SUKKAL 
+>>Q000002 018 
+5'. 1(N01) , GADA~a SUKKAL 
+>>Q000002 019 
+6'. 1(N01) , GAL~a# GA~a# 
+>>Q000002 020 
+7'. 1(N01) , [...] 
+>>Q000002 021 
+$ rest broken 
+@column 3 
+$ beginning broken 
+1'. 1(N01) , [...] 
+>>Q000002 n 
+2'. 1(N01) , [...] 
+>>Q000002 n 
+3'. 1(N01) , [...] 
+>>Q000002 n 
+$ rest broken 
+@reverse 
+@column 1 
+$ beginning broken 
+1'. 1(N01) , [...] 
+>>Q000026 044 
+2'. 1(N01) , AN# BAR# USZ~a#? 
+>>Q000026 045 
+3'. 1(N01) , NU# A# 
+>>Q000026 046 
+4'. 1(N01) , AN# NU# A# 
+>>Q000026 047 
+5'. 1(N01) , NU# GIR~a#? 
+>>Q000026 048 
+6'. 1(N01) , [...] NU# GIR~a# 
+>>Q000026 049 
+7'. 1(N01) , [...] X 
+>>Q000026 050 
+$ rest broken 
+@column 2 
+$ beginning broken 
+1'. 1(N01) , [...] 
+>>Q000026 057 
+2'. 1(N01) , [...] A#? 
+>>Q000026 058 
+3'. 1(N01) , [...] A#? 
+>>Q000026 059 
+4'. 1(N01) , [...] GUG2 
+>>Q000026 060 
+5'. 1(N01) , [...] 
+>>Q000026 061 
+6'. 1(N01) , [...] 
+>>Q000026 062 
+$ rest broken 
+ 

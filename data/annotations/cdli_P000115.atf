@@ -1,0 +1,23 @@
+&P000100 = CDLI Lexical 000030, ex. 01 
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+1. 1(N01) , SAG KI AD~a 
+>>Q000030 001 
+2. 1(N01) , HAL ABRIG AD~a 
+>>Q000030 002 
+3. [N] , [...] 
+>>Q000030 003 
+@reverse 
+$ beginning broken 
+@column 1' 
+1. [1(N01)] , [...] 
+>>Q000030 n 
+2. [1(N01)] , [...] X 
+>>Q000030 n 
+$ rest broken 
+@column 2' 
+1. [N] , [...] 
+>>Q000030 colophon 
+

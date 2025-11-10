@@ -1,0 +1,34 @@
+&P000045 = CDLI Lexical 000007, ex. 007 
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ beginning broken 
+1'. 1(N01) , [...] EN~a# 
+>>Q000007 018 
+2'. 1(N01) , KAB NAM2 
+>>Q000007 019 
+$ rest broken 
+@column 2 
+$ beginning broken 
+1'. 1(N01) , [...] X 
+>>Q000007 n 
+2'. 1(N01) , [...] 
+>>Q000007 n 
+3'. 1(N01) , [...] 
+>>Q000007 n 
+4'. 1(N01) , X [...] 
+>>Q000007 n 
+5'. 1(N01) , X [...] 
+>>Q000007 n 
+$ rest broken 
+@column 3 
+$ beginning broken 
+1'. 1(N01) , X [...] 
+>>Q000007 n 
+$ rest broken 
+@reverse 
+1. [...] 4(N01)# , [...] 
+>>Q000007 colophon 
+ 
+ 

@@ -1,0 +1,38 @@
+&P000066 = CDLI Lexical 000002, ex. 047
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+1. 1(N01) , NAM2# PA~a# RAD~a# 
+>>Q000002 010 
+2. 1(N01) , AB~a# ME~a# 
+>>Q000002 011 
+3. 1(N01) , GAL~a# |1(N58).BAD~a|# 
+>>Q000002 012 
+4. 1(N01) , EN~a# IB~a# 
+>>Q000002 013 
+$ rest broken 
+@column 2 
+1. 1(N01) , [...] 
+>>Q000002 024 
+2. 1(N01) , GAL~a SZAB~a# 
+>>Q000002 025 
+3. 1(N01) , BU~a SZAB~a# 
+>>Q000002 026 
+4. 1(N01) , GAL~a [...] 
+>>Q000002 027 
+5. 1(N01) , [...] 
+>>Q000002 028 
+$ rest broken 
+@column 3 
+1. 1(N01) , [...] 
+>>Q000002 n 
+2. 1(N01) , [...] 
+>>Q000002 n 
+3. 1(N01) , [...] 
+>>Q000002 n 
+$ rest broken 
+@reverse 
+1. [N] , [...] 
+>>Q000002 colophon  
+
