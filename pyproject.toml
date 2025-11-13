@@ -1,35 +1,33 @@
 [project]
 name = "deep-cuneiform"
 version = "0.1.0"
-description = "DeepSeek-OCR fine-tuned on untranslated Sumerian tablets"
-requires-python = ">=3.11,<3.14"
+description = "Fine-tuning DeepSeek-OCR on Sumerian cuneiform tablets (ATF) using LoRA + 4-bit + Flash Attention 2 on RTX 4090"
+authors = [{name = "Hayden", email = "hayden@davdrive.com"}]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = "==3.11.9"
 dependencies = [
-    "torch==2.2.2",
-    "torchvision==0.17.2",
-    "unsloth",
-    # "vllm>=0.6.0",  # Commented out due to transformers version conflicts
-    "gradio>=4.0",
+    "torch==2.6.0",
+    "transformers==4.46.3",
+    "tokenizers==0.20.3",
+    "einops",
+    "addict>=2.4.0",
+    "matplotlib>=3.10.7",
+    "easydict>=1.13",
+    "bitsandbytes>=0.43.0",
     "pillow",
     "huggingface-hub",
     "datasets",
-    "transformers==4.36.2",
-    "peft==0.4.0",
-    "trl==0.7.4",
-    "addict",
-    "easydict",
-    "einops",
-    "requests",
-    "markdown",
     "beautifulsoup4",
+    "gradio>=4.0",
+    # Temporarily removed: unsloth, vllm, unsloth_zoo (add back post-training if needed)
+    "setuptools>=70.2.0",
+    "wheel>=0.45.1",
+    "packaging>=24.1",
+    "peft>=0.17.1",
+    "trl>=0.11.4",
+    "torchvision>=0.21.0",
 ]
 
 [tool.uv]
-required-environments = ["sys_platform == 'linux' and platform_machine != 'aarch64'"]
-dev-dependencies = [
-    "jupyter",
-    "matplotlib",
-    "seaborn",
-]
-
-[tool.uv.sources]
-unsloth = { git = "https://github.com/unslothai/unsloth.git" }
+extra-index-url = ["https://download.pytorch.org/whl/cu124"]

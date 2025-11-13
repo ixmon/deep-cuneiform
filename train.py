@@ -1,79 +1,102 @@
+# train.py — DeepSeek-OCR Cuneiform OCR Fine-Tuning (4090)
 import os
 import torch
-from transformers import AutoModelForVision2Seq, AutoTokenizer, TrainingArguments
+from transformers import AutoModel, AutoTokenizer, BitsAndBytesConfig, Trainer, TrainingArguments, CLIPImageProcessor
 from peft import LoraConfig, get_peft_model
 from datasets import Dataset
-from trl import SFTTrainer
+from PIL import Image
+import warnings
 
-# Load dataset (assume image paths and ATF texts in data/)
-image_paths = [f'data/images/{f}' for f in os.listdir('data/images') if f.endswith(('.jpg', '.png'))]  # Support PNG from HeiCuBeDa
+warnings.filterwarnings("ignore")
+
+# ==============================
+# 1. CONFIG
+# ==============================
+DATA_DIR = "data"
+IMAGE_DIR = os.path.join(DATA_DIR, "images")
+ANN_DIR = os.path.join(DATA_DIR, "annotations")
+OUTPUT_DIR = "outputs"
+FINAL_MODEL_DIR = "models/sumerian-deepseek-ocr"
+
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(FINAL_MODEL_DIR, exist_ok=True)
+
+# ==============================
+# 2. LOAD DATASET
+# ==============================
+image_paths = [
+    os.path.join(IMAGE_DIR, f)
+    for f in os.listdir(IMAGE_DIR)
+    if f.lower().endswith(('.jpg', '.png', '.jpeg'))
+]
+
 atf_texts = []
-for f in os.listdir('data/images'):
-    if f.endswith(('.jpg', '.png')):
-        ann_path = f'data/annotations/{f.replace(".png", "").replace(".jpg", "")}.atf'
-        if os.path.exists(ann_path):
-            with open(ann_path, 'r') as ann_f:
-                ann_text = ann_f.read()
-                # Placeholder for XML to ATF conversion if needed
-                if '<xml>' in ann_text.lower():  # Simple check
-                    # TODO: Implement XML parsing to extract ATF transliteration
-                    ann_text = '# Placeholder ATF from XML: &P123456 = Sample Tablet\n1. sample sign\n'
-                atf_texts.append(ann_text)
-        else:
-            atf_texts.append('# No annotation')  # Fallback
+for img_file in [os.path.basename(p) for p in image_paths]:
+    base_name = os.path.splitext(img_file)[0]
+    ann_path = os.path.join(ANN_DIR, f"{base_name}.atf")
+    if os.path.exists(ann_path):
+        with open(ann_path, 'r', encoding='utf-8') as f:
+            text = f.read().strip()
+    else:
+        text = "# No annotation"
+    atf_texts.append(text)
 
-dataset = Dataset.from_dict({'image': image_paths, 'text': atf_texts[:200]})  # Limit to 200 samples
-train_dataset = dataset.train_test_split(test_size=0.2)['train']
-val_dataset = dataset.train_test_split(test_size=0.2)['test']
+raw_dataset = Dataset.from_dict({"image": image_paths, "text": atf_texts})
+dataset_split = raw_dataset.train_test_split(test_size=0.2, seed=3407)
+train_dataset = dataset_split["train"]
+eval_dataset = dataset_split["test"]
 
-# Load model
-model = AutoModelForVision2Seq.from_pretrained("deepseek-ai/DeepSeek-OCR", device_map="auto", trust_remote_code=True)
-tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/DeepSeek-OCR")
+print(f"Loaded {len(train_dataset)} train, {len(eval_dataset)} eval samples.")
 
-# Apply LoRA
+# ==============================
+# 3. LOAD TOKENIZER & IMAGE PROCESSOR
+# ==============================
+tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/DeepSeek-OCR", trust_remote_code=True)
+tokenizer.padding_side = "left"
+
+# Use CLIP image processor (DeepSeek-VL2 vision tower is CLIP-based)
+image_processor = CLIPImageProcessor.from_pretrained("openai/clip-vit-large-patch14")
+
+# ==============================
+# 4. LOAD MODEL
+# ==============================
+quantization_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch.bfloat16,
+    bnb_4bit_use_double_quant=True,
+)
+
+model = AutoModel.from_pretrained(
+    "deepseek-ai/DeepSeek-OCR",
+    quantization_config=quantization_config,
+    device_map="auto",
+    trust_remote_code=True,
+    torch_dtype=torch.bfloat16,
+    attn_implementation="flash_attention_2",
+)
+
+# ==============================
+# 5. LoRA
+# ==============================
 lora_config = LoraConfig(
     r=16,
     lora_alpha=16,
-    target_modules=['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj'],
-    lora_dropout=0,
-    bias='none',
-    task_type="CAUSAL_LM"
+    target_modules=[
+        'q_proj', 'k_proj', 'v_proj', 'o_proj',
+        'gate_proj', 'up_proj', 'down_proj'
+    ],
+    lora_dropout=0.05,
+    bias="none",
+    task_type="CAUSAL_LM",
 )
 model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
 
-# Data collator - simplified, assuming text-only for now; for images, need custom collator
-def collate_fn(batch):
-    # Placeholder: adjust for image + text processing
-    texts = [item['text'] for item in batch]
-    inputs = tokenizer(texts, return_tensors='pt', padding=True, truncation=True, max_length=2048)
-    return inputs
-
-# Trainer
-trainer = SFTTrainer(
-    model=model,
-    tokenizer=tokenizer,
-    train_dataset=train_dataset,
-    eval_dataset=val_dataset,
-    data_collator=collate_fn,
-    args=TrainingArguments(
-        per_device_train_batch_size=2,
-        gradient_accumulation_steps=4,
-        warmup_steps=5,
-        max_steps=60,
-        learning_rate=2e-4,
-        fp16=not torch.cuda.is_bf16_supported(),
-        bf16=torch.cuda.is_bf16_supported(),
-        logging_steps=1,
-        output_dir='outputs',
-        optim='adamw_torch',
-        seed=3407
-    )
-)
-
-trainer.train()
-
-# Save model
-model.save_pretrained('models/sumerian-deepseek-ocr')
-tokenizer.save_pretrained('models/sumerian-deepseek-ocr')
-
-print('Fine-tuning complete! Model saved to models/sumerian-deepseek-ocr')
+# ==============================
+# 6. PREPROCESS FUNCTION (FIXED WITH PIL)
+# ==============================
+def preprocess_function(examples):
+    image_paths = examples["image"]
+    texts = examples["text"]
+    prompt = "User: Transcribe this cuneiform tablet in ATF format.\n"

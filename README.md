@@ -1,18 +1,25 @@
 # deep-cuneiform
 DeepSeek OCR for cuneiform
 
-As far as I know, this is the first-ever DeepSeek-OCR fine-tuned on Sumerian cuneiform.
 
-Placeholder for results
+# DeepCuneiform Training Log — 2025-11-13
 
-Zero-shot on test.jpg: ...
+## Hardware
+- GPU: NVIDIA RTX 4090 (24GB)
+- System: WSL2 (Ubuntu 22.04)
+- CUDA: 12.4
+- Driver: 560.81
 
-After 60-step fine-tune: ....
+## Stack (Frozen)
+```bash
+cat requirements-deepcuneiform-2025-11-13.txt
 
-## Setup
-- Install: `uv sync`
-- Python: 3.11.9 (pinned in .python-version)
+## Reproduce Training Environment
 
-## Usage
-1. Download data: `uv run python data/download_cdli.py --limit 10` (downloads from CDLI using cdli_cat.csv; adjust limit as needed)
-2. Fine-tune: `uv run python train.py` (saves to models/)
+```bash
+uv sync
+
+## Train
+
+```bash
+uv run python train.py
