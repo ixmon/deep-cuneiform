@@ -1,0 +1,28 @@
+&P000012 = CDLI Lexical 000002, ex. 136
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+1. 1(N01) , [...] NIMGIR 
+>>Q000002 065 
+2. 1(N01) , NIMGIR# SIG7 
+>>Q000002 066 
+3. 1(N01) , [...] SUHUR 
+>>Q000002 071 
+4. 1(N01) , [...] SUHUR# 
+>>Q000002 072 
+$ rest broken 
+@column 2 
+1. 1(N01) , TAR~a UTUL~a# 
+>>Q000002 093 
+2. 1(N01) , GAL~a DU6~b 
+>>Q000002 086 
+3. 1(N01) , KUR~a [...] 
+>>Q000002 087 
+4. 1(N01) , [...] 
+>>Q000002 088 
+$ rest broken 
+@reverse 
+1. [N] 1(N01) , X [...] 
+>>Q000002 colophon 
+

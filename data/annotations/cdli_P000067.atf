@@ -1,0 +1,35 @@
+&P000055 = CDLI Lexical 000002, ex. 058
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ beginning broken 
+1'. 1(N01) , [...] 
+>>Q000002 015 
+2'. 1(N01) , KINGAL# 
+>>Q000002 016 
+3'. 1(N01) , GAL~a TE 
+>>Q000002 017 
+4'. 1(N01) , GAL~a# [...] 
+>>Q000002 018 
+$ rest broken 
+@column 2 
+$ beginning broken 
+1'. 1(N01) , GAL~a# UMUN2# 
+>>Q000002 029 
+2'. 1(N01) , ERIN# UMUN2 
+>>Q000002 030 
+3'. 1(N01) , SANGA~a# UMUN2# 
+>>Q000002 031 
+$ rest broken 
+@column 3 
+$ beginning broken 
+1'. 1(N01) , [...] 
+>>Q000002 031 
+2'. 1(N01) , [...] 
+>>Q000002 031 
+$ rest broken 
+@reverse 
+1. [N] , [...] AN# X NUN~a# 
+>>Q000002 colophon 
+

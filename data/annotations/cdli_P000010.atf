@@ -1,0 +1,35 @@
+&P000010 = CDLI Lexical 000007, ex. 006
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ beginning broken 
+1'. 1(N01) , [...] EN~a# NUN~a 
+>>Q000007 016 
+2'. 1(N01) , X EN~a AMAR 
+>>Q000007 017 
+3'. 1(N01) , X |SZU2.EN~a|# [...] 
+>>Q000007 018 
+$ rest broken 
+@reverse 
+@column 1 
+$ beginning broken 
+1'. 1(N01) , [...] 
+>>Q000007 066 
+2'. 1(N01) , X IB~a ZATU686~a 
+>>Q000007 067 
+3'. 1(N01) , X [...] 
+>>Q000007 068 
+$ rest broken 
+@column 2 
+$ beginning broken 
+1'. 1(N01) , [...] 
+>>Q000007 n 
+2'. 1(N01) , [...] 
+>>Q000007 n 
+$ rest broken 
+@column 3 
+1. [N] , [...] 
+>>Q000007 colophon 
+
+ 

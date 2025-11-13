@@ -1,0 +1,32 @@
+&P000098 = CDLI Lexical 000023, ex. 038 
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ broken 
+@column 2 
+1. [1(N01)] , GAN~a# 
+>>Q000023 018 
+2. 1(N01) , 5(N57)# GAN~a 
+>>Q000023 019 
+3. 1(N01) , [...] GAN~a# 
+>>Q000023 020 
+4. 1(N01) , |DUG~bxSZE~a| 
+>>Q000023 021 
+5. [1(N01)] , |DUG~bxBALA~a|# 
+>>Q000023 022 
+$ rest broken 
+@column 3 
+1. [1(N01)] , [...] 
+>>Q000023 n 
+2. 1(N01) , X [...] 
+>>Q000023 n 
+3. 1(N01) , |DUG~bxX|# 
+>>Q000023 n 
+4. 1(N01)# , [...] 
+>>Q000023 n 
+$ rest broken 
+@reverse 
+1. 1(N34)# [...] , [...] 
+>>Q000023 colophon 
+

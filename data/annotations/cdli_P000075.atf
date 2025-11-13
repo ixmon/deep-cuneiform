@@ -1,0 +1,41 @@
+&P000062 = CDLI Lexical 000030, ex. 27 
+#atf: lang qpc 
+@tablet 
+@obverse 
+@column 1 
+$ broken 
+@column 2 
+$ beginning broken 
+1'. [N] , [...] 
+>>Q000030 017 
+2'. [N] , GA~b#? 
+>>Q000030 018 
+3'. [N] , GA~b# 
+>>Q000030 019 
+$ rest broken 
+@column 3 
+$ beginning broken 
+1'. 1(N34)# 1(N01)# , [...] 
+>>Q000030 026 
+2'. 1(N01) , ISZ~b 
+>>Q000030 027 
+3.a'. 1(N01) , NAR# 
+>>Q000030 028 
+3.b'. 1(N01) , SZA3~a1 URI 
+>>Q000030 029 
+4'. 1(N01) , GAR# 
+>>Q000030 030 
+5'. 5(N01)# , [...] 
+>>Q000030 031 
+$ rest broken 
+@column 4 
+$ beginning broken 
+1'. [N] , [...] 
+>>Q000030 n 
+2'. [N] , [...] 
+>>Q000030 n 
+$ rest broken 
+@reverse 
+1. [N] , [...] 
+>>Q000030 colophon 
+
