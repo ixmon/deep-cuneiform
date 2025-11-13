@@ -18,3 +18,8 @@ cat requirements-deepcuneiform-2025-11-13.txt
 
 ```bash
 uv sync
+
+## Train
+
+```bash
+uv run python train.py
