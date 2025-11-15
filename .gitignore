@@ -209,8 +209,13 @@ __marimo__/
 # more stuff
 *.pyc
 *.log
+*.swp
 .DS_Store
+data/cdli-gh-data/
 data/raw/
+data/annotations/*atf
+data/images/*jpg
+data/download_state.json
 models/
 
 
