@@ -55,11 +55,11 @@ def parse_atf(atf_text):
             atf_line = re.sub(r'^\d+[\'"]*\.\s*', '', line)
         else:
             atf_line = line
-        parts = line.split(',')
+        parts = atf_line.split(',')
         if len(parts) > 1:
             signs = parts[1].strip().split()
         else:
-            signs = line.split()
+            signs = atf_line.split()
         if signs:
             if current_section not in sections:
                 sections[current_section] = {}
@@ -122,11 +122,9 @@ def generate_translation_image(sections, translations_dict, artifact_id, period,
             continue  # Skip main section headers
         lines.append(f"{section.upper()}")
         for col, col_lines in columns.items():
-            if col == 'main':
-                continue  # Skip main column headers
-            lines.append(f"  {col.replace('_', ' ').upper()}")
+            if col != 'main':
+                lines.append(f"  {col.replace('_', ' ').upper()}")
             for item in col_lines:
-                print(f"Building line for item: {item}")
                 try:
                     line_num, atf_line, signs = item
                 except ValueError:
