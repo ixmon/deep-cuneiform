@@ -211,7 +211,7 @@ def generate_translation_image(sections, translations_dict, artifact_id, period,
 def translate_signs(signs, translations_dict):
     translations = []
     for sign in signs:
-        clean_sign = re.sub(r'[~#?].*', '', sign).strip('|').upper()
+        clean_sign = re.sub(r'[~#?\d].*', '', sign).strip('|').upper()
         if clean_sign in translations_dict:
             translations.append(translations_dict[clean_sign])
         else:
