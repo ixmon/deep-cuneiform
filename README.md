@@ -41,6 +41,17 @@ uv run python tools/download_cdli.py
 - Resumable downloads with `data/download_state.json`
 - Saves images to `data/images/` and ATF to `data/annotations/`
 
+### Download Individual ATF Files
+Download ATF transliteration for a specific tablet by artifact ID:
+
+```bash
+uv run python tools/download_cdli.py --artifact_id 663
+```
+
+- Fetches ATF directly from CDLI API
+- Updates download state automatically
+- Useful for getting specific tablets not in bulk download
+
 ### Lookup Artifacts
 Get comprehensive details for a specific artifact by ID:
 

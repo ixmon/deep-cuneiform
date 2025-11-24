@@ -39,11 +39,84 @@ def is_good_quality(atf_text, img_path):
         return False
     return True
 
+def download_single_atf(artifact_id):
+    """Download ATF for a single artifact by ID."""
+    # Load state
+    state = load_state()
+
+    # Check if already downloaded
+    if artifact_id in state and state[artifact_id].get('downloaded', False):
+        ann_path = f"data/annotations/cdli_P{int(state[artifact_id].get('pnumber', '0')[1:]):06d}.atf"
+        if os.path.exists(ann_path):
+            print(f"ATF already downloaded for artifact {artifact_id} at {ann_path}")
+            return True
+
+    # Find pnumber from CSV if not in state
+    pnumber = None
+    csv_path = 'data/cdli-gh-data/cdli_cat.csv'
+    if os.path.exists(csv_path):
+        with open(csv_path, 'r', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                if row.get('id') == artifact_id:
+                    pnumber_raw = row.get('id_text')
+                    if pnumber_raw:
+                        try:
+                            pnumber = f"P{int(pnumber_raw):06d}"
+                        except ValueError:
+                            pnumber = pnumber_raw
+                    break
+
+    if not pnumber:
+        print(f"P-number not found for artifact ID {artifact_id}")
+        return False
+
+    ann_path = f'data/annotations/cdli_{pnumber}.atf'
+
+    # Fetch ATF
+    if not os.path.exists(ann_path):
+        meta_url = f'https://cdli.earth/artifacts/{artifact_id}'
+        try:
+            response = requests.get(meta_url, headers={'Accept': 'application/json'}, timeout=10)
+            if response.status_code == 200:
+                metadata = response.json()[0]
+                inscription = metadata.get('inscription', {})
+                atf_text = inscription.get('atf', '')
+                if atf_text:
+                    with open(ann_path, 'w', encoding='utf-8') as f:
+                        f.write(atf_text)
+                    print(f'Successfully downloaded ATF for artifact {artifact_id} to {ann_path}')
+
+                    # Update state
+                    if artifact_id not in state:
+                        state[artifact_id] = {}
+                    state[artifact_id]['downloaded'] = True
+                    state[artifact_id]['pnumber'] = pnumber
+                    save_state(state)
+                    return True
+                else:
+                    print(f'No ATF available for artifact {artifact_id}')
+                    return False
+            else:
+                print(f'API failed for artifact {artifact_id}: {response.status_code}')
+                return False
+        except Exception as e:
+            print(f'Error fetching ATF for artifact {artifact_id}: {e}')
+            return False
+    else:
+        print(f'ATF already exists for artifact {artifact_id} at {ann_path}')
+        return True
+
 def main():
     parser = argparse.ArgumentParser(description='Download filtered CDLI images and annotations with resumable state')
     parser.add_argument('--limit', type=int, default=None, help='Limit to N items')
     parser.add_argument('--resume', action='store_true', help='Resume from saved state')
+    parser.add_argument('--artifact_id', type=str, help='Download ATF for a specific artifact ID')
     args = parser.parse_args()
+
+    if args.artifact_id:
+        download_single_atf(args.artifact_id)
+        return
 
     # Load or initialize state
     state = load_state() if args.resume else {}
