@@ -114,13 +114,13 @@ uv run python train.py
 - Visualizations support Unicode cuneiform rendering in compatible viewers.
 - Download script automatically resumes interrupted downloads.
 
-### TODO: Fully Parse ATF Compound & Variant Signs 
+### TODO: Fully Parse ATF Compound & Variant Signs
 
 > **Goal**: Convert complex ATF like `|(GISZx(DIN.DIN))~a|#` → `U+12459` (𒑙) + damage marker
 
 #### Current Status
 - [x] Simple signs: `GISZ` → `U+12113`
 - [x] Basic compounds: `GISZxDIN` → `U+12451`
-- [ ] Full ATF syntax: `|...|`, `(...)`, `~a`, `#`, `!`, `[...]`
+- [x] Full ATF syntax: `|...|`, `(...)`, `~a`, `#`, `!`, `[...]`
 
 
