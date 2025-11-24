@@ -3,12 +3,19 @@ import csv
 import json
 import os
 import re
+import sys
 import xml.etree.ElementTree as ET
+
+# Add lib to path for atf2unicode
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'lib'))
+
+from atf2unicode.main import atf_to_cuneiform
 
 # Paths
 DICT_DIR = 'data/dictionaries'
 SUMERIAN_DICT = os.path.join(DICT_DIR, 'manual_sumerian_dict.txt')
 ASSYRIAN_DICT = os.path.join(DICT_DIR, 'assyrian_dict.json')
+ATF_MAP = os.path.join(DICT_DIR, 'atf_unicode_map.json')
 EPSD_XML = os.path.join(DICT_DIR, 'epsd_data.xml')
 PROTOCUNEIFORM_SIGNS = os.path.join(DICT_DIR, 'protocuneiform_signs.csv')
 STATE_FILE = 'data/download_state.json'
@@ -20,6 +27,45 @@ def load_dictionaries():
     assyrian_dict = {}
     protocuneiform_dict = {}
 
+    # Load ATF map for compounds and complex signs
+    atf_map = {}
+    if os.path.exists(ATF_MAP):
+        try:
+            with open(ATF_MAP, 'r') as f:
+                data = json.load(f)
+                # Create translation mappings from ATF signs to English meanings
+                # For now, we'll use placeholder meanings for compounds
+                # In a real implementation, you'd have a separate translation dict
+                for sign in data.get('simple', {}):
+                    # Simple signs: try to get meaning from manual dict or use sign name
+                    pass  # Will be handled below
+                for compound, unicode_val in data.get('compounds', {}).items():
+                    # For compounds, add known meanings
+                    if compound == '|(GISZX(DIN.DIN))|':
+                        atf_map[compound] = 'wall'
+                    elif compound == '|GISZ.DIN|':
+                        atf_map[compound] = 'tree-life'
+                    elif compound == '|GISZXDIN|':
+                        atf_map[compound] = 'tree-life'
+                    elif compound == '|LAGAB+LAGAB|':
+                        atf_map[compound] = 'brick'
+                    elif compound == '|DU.DU|':
+                        atf_map[compound] = 'du-du'
+                    elif 'LAGAB' in compound:
+                        atf_map[compound] = 'block'
+                    else:
+                        # General patterns only for unknown compounds
+                        if 'GISZ' in compound and 'DIN' in compound:
+                            atf_map[compound] = 'wall'
+                        elif 'GISZ' in compound:
+                            atf_map[compound] = 'wood/tree'
+                        elif 'DIN' in compound:
+                            atf_map[compound] = 'life'
+                        else:
+                            atf_map[compound] = f'compound-sign'
+        except json.JSONDecodeError:
+            print("Warning: ATF map JSON is invalid.")
+
     # Load Sumerian dict (tab-separated)
     if os.path.exists(SUMERIAN_DICT):
         with open(SUMERIAN_DICT, 'r', encoding='utf-8') as f:
@@ -28,6 +74,8 @@ def load_dictionaries():
                 if len(parts) >= 2:
                     sign, english = parts[0], parts[1]
                     sumerian_dict[sign] = english
+                    # Also add to compounds if it's a compound sign
+                    atf_map[sign] = english
 
     # Load ePSD XML for Sumerian (if available)
     if os.path.exists(EPSD_XML):
@@ -45,6 +93,7 @@ def load_dictionaries():
                             meanings.append(def_elem.text)
                     if meanings:
                         sumerian_dict[sign] = '; '.join(meanings)
+                        atf_map[sign] = '; '.join(meanings)
         except ET.ParseError:
             print("Warning: Failed to parse ePSD XML.")
 
@@ -59,8 +108,10 @@ def load_dictionaries():
                     phonetic = row.get('phonetic', '').strip()
                     if m_code and english:
                         protocuneiform_dict[m_code] = english
+                        atf_map[m_code] = english
                     elif m_code and phonetic:
                         protocuneiform_dict[m_code] = f"[{phonetic}]"
+                        atf_map[m_code] = f"[{phonetic}]"
         except Exception as e:
             print(f"Warning: Failed to load proto-cuneiform signs: {e}")
 
@@ -73,53 +124,99 @@ def load_dictionaries():
             print("Warning: Assyrian dictionary JSON is invalid or empty.")
             assyrian_dict = {}
 
-    return sumerian_dict, assyrian_dict, protocuneiform_dict
+    return sumerian_dict, assyrian_dict, protocuneiform_dict, atf_map
 
-def extract_signs_from_atf(atf_text):
-    # Extract signs: standard like GISZ, or proto-cuneiform like M365, M365#, M263~1, |M157+M288|
-    signs = re.findall(r'\b(?:\|[^|]+\||[A-Z]+(?:\d+)?(?:~[^ #\n]+)?(?:#[^ \n]+)?)\b', atf_text)
+def extract_signs_from_atf_line(line):
+    """Extract individual signs from a single ATF line."""
+    # Remove line numbers and other metadata
+    line = re.sub(r'^\d+[\'"]*\.', '', line.strip())
+    if not line:
+        return []
+
+    signs = []
+    # Split by comma to get the transliteration part
+    if ',' in line:
+        parts = line.split(',')
+        if len(parts) >= 2:
+            transliteration = parts[1].strip()
+            # Split by spaces and extract potential signs
+            candidates = re.split(r'\s+', transliteration)
+            for candidate in candidates:
+                candidate = candidate.strip()
+                if candidate and not candidate.startswith('>>') and candidate != '[...]':
+                    # Check if it's a valid ATF sign by trying to parse it
+                    try:
+                        glyph, ann = atf_to_cuneiform(candidate)
+                        if glyph and not glyph.startswith('['):
+                            signs.append(candidate)
+                    except:
+                        pass
+
     return signs
 
 def translate_atf(atf_text, language='sumerian'):
-    sumerian_dict, assyrian_dict, protocuneiform_dict = load_dictionaries()
-    signs = extract_signs_from_atf(atf_text)
-    translations = []
+    sumerian_dict, assyrian_dict, protocuneiform_dict, atf_map = load_dictionaries()
 
-    print(f"Extracted signs: {signs[:20]}")  # Debug
+    # Process ATF line by line
+    lines = atf_text.split('\n')
+    all_translations = []
 
-    for sign in signs:
-        # Normalize sign: remove suffixes like #, ~, etc. for lookup
-        clean_sign = re.sub(r'[~#?].*', '', sign).strip('|')
-        if '+' in clean_sign:
-            # For compounds like |M157+M288|, split and translate each
-            parts = clean_sign.split('+')
-            part_translations = []
-            for part in parts:
-                if part in sumerian_dict:
-                    part_translations.append(sumerian_dict[part])
-                elif part.startswith('M') and part in protocuneiform_dict:
-                    part_translations.append(protocuneiform_dict[part])
-                else:
-                    part_translations.append(f'[{part}]')
-            translations.append('+'.join(part_translations))
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith('@') or line.startswith('$') or line.startswith('#'):
             continue
 
-        translated = False
-        if language == 'sumerian':
-            if clean_sign in sumerian_dict:
-                translations.append(sumerian_dict[clean_sign])
-                translated = True
-            elif clean_sign.startswith('M') and clean_sign in protocuneiform_dict:
-                translations.append(protocuneiform_dict[clean_sign])
-                translated = True
-        elif language == 'assyrian' and clean_sign in assyrian_dict:
-            translations.append(assyrian_dict.get(clean_sign, {}).get('english', ''))
-            translated = True
+        signs = extract_signs_from_atf_line(line)
+        line_translations = []
 
-        if not translated:
-            translations.append(f'[{sign}]')  # Unknown
+        for sign in signs:
+            # Normalize sign for lookup (same as ATF parser does)
+            lookup_sign = sign
 
-    return ' '.join(translations)
+            # Handle annotations at the end (same as parse_atf_expression)
+            if lookup_sign.endswith('#'):
+                lookup_sign = lookup_sign[:-1]
+            if lookup_sign.endswith('!'):
+                lookup_sign = lookup_sign[:-1]
+            if lookup_sign.endswith('*'):
+                lookup_sign = lookup_sign[:-1]
+            if lookup_sign.endswith('?'):
+                lookup_sign = lookup_sign[:-1]
+
+            # Handle variants ~a (simple strip for compounds)
+            if lookup_sign.startswith('|') and '~' in lookup_sign:
+                # Replace ~X| with | to normalize compound variants (case insensitive)
+                for var in ['~A|', '~B|', '~C|', '~D|', '~E|', '~F|', '~G|', '~H|', '~I|', '~J|', '~K|', '~L|', '~M|', '~N|', '~O|', '~P|', '~Q|', '~R|', '~S|', '~T|', '~U|', '~V|', '~W|', '~X|', '~Y|', '~Z|',
+                           '~a|', '~b|', '~c|', '~d|', '~e|', '~f|', '~g|', '~h|', '~i|', '~j|', '~k|', '~l|', '~m|', '~n|', '~o|', '~p|', '~q|', '~r|', '~s|', '~t|', '~u|', '~v|', '~w|', '~x|', '~y|', '~z|']:
+                    if var in lookup_sign:
+                        lookup_sign = lookup_sign.replace(var, '|')
+                        break
+
+            # Uppercase for lookup (ATF is case-insensitive)
+            lookup_sign = lookup_sign.upper()
+
+            # Look up in our translation maps
+            translation = None
+            if lookup_sign in atf_map:
+                translation = atf_map[lookup_sign]
+            elif lookup_sign in sumerian_dict:
+                translation = sumerian_dict[lookup_sign]
+            elif lookup_sign.startswith('M') and lookup_sign in protocuneiform_dict:
+                translation = protocuneiform_dict[lookup_sign]
+
+            if translation:
+                line_translations.append(translation)
+            else:
+                # Try the original sign
+                if sign in sumerian_dict:
+                    line_translations.append(sumerian_dict[sign])
+                else:
+                    line_translations.append(f'[{sign}]')  # Unknown
+
+        if line_translations:
+            all_translations.append(' '.join(line_translations))
+
+    return '\n'.join(all_translations)
 
 def determine_reading_direction(atf_text, period):
     # Basic heuristic: If @column is present, likely columnar (top to bottom per column, left to right across)

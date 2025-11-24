@@ -72,16 +72,17 @@ def parse_atf(atf_text):
 
 def render_cuneiform_line(signs, cuneiform_font):
     glyphs = []
+    all_annotations = []
     for sign in signs:
-        clean_sign = re.sub(r'[~#?].*', '', sign).strip('|')
         try:
-            converted = atf_to_cuneiform(clean_sign)
-            if converted and not converted.startswith('[') and converted != clean_sign:
+            converted, ann = atf_to_cuneiform(sign)
+            if converted and not converted.startswith('[') and converted != sign:
                 glyphs.append(converted)
+                all_annotations.extend(ann)
             # Suppress fallbacks: don't add if it's brackets or unchanged
         except:
             pass  # Suppress errors too
-    return ''.join(glyphs) if glyphs else ''  # Return empty if no valid glyphs
+    return ''.join(glyphs) if glyphs else '', all_annotations  # Return empty if no valid glyphs
 
 def generate_translation_image(sections, translations_dict, artifact_id, period, quality_checked, output_path):
     # Load fonts
@@ -142,14 +143,16 @@ def generate_translation_image(sections, translations_dict, artifact_id, period,
                 if ',' in atf_line:
                     before, after = atf_line.split(',', 1)
                     signs = after.strip().split()
-                    cuneiform_line = render_cuneiform_line(signs, cuneiform_font)
+                    cuneiform_line, annotations = render_cuneiform_line(signs, cuneiform_font)
                     atf_part = after.strip()
                     trans_line = translate_signs(signs, translations_dict)
                 else:
-                    cuneiform_line = render_cuneiform_line(signs, cuneiform_font)
+                    cuneiform_line, annotations = render_cuneiform_line(signs, cuneiform_font)
                     atf_part = atf_line
                     trans_line = translate_signs(signs, translations_dict)
-                lines.append(f"{line_num:<5}{cuneiform_line:<20}{atf_part:<30}{trans_line:<20}")
+                # Determine color based on annotations
+                color = 'red' if 'damaged' in annotations else 'white'
+                lines.append((f"{line_num:<5}{cuneiform_line:<20}{atf_part:<30}{trans_line:<20}", color))
     # Calculate image size: cuneiform on left, text on right
     char_width = font.getbbox('A')[2] - font.getbbox('A')[0]
     cuneiform_char_width = cuneiform_font.getbbox('A')[2] - cuneiform_font.getbbox('A')[0] if cuneiform_font != font else char_width
@@ -168,7 +171,12 @@ def generate_translation_image(sections, translations_dict, artifact_id, period,
     draw.text((10, 10), header, fill='white', font=font)
     y = 40  # Start below header
 
-    for line in lines:
+    for line_item in lines:
+        if isinstance(line_item, tuple):
+            line, color = line_item
+        else:
+            line, color = line_item, 'cyan'  # default for headers
+
         if line in ['OBVERSE', 'REVERSE'] or 'COLUMN' in line:
             print(f"Drawing section header: {line}")
             draw.text((10, y), line, fill='cyan', font=font)
@@ -184,13 +192,13 @@ def generate_translation_image(sections, translations_dict, artifact_id, period,
             cuneiform_part = line[5:25].strip()
             atf_part = line[25:55].strip()
             trans_part = line[55:].strip()
-            print(f"Drawing data line: num='{line_num}', cuneiform='{cuneiform_part}', atf='{atf_part}', trans='{trans_part}'")
-            
+            print(f"Drawing data line: num='{line_num}', cuneiform='{cuneiform_part}', atf='{atf_part}', trans='{trans_part}' color={color}")
+
             x = 10
             draw.text((x, y), line_num, fill='cyan', font=font)
             x += 60  # space for line num
             if cuneiform_part:
-                draw.text((x, y), cuneiform_part, fill='white', font=cuneiform_font)
+                draw.text((x, y), cuneiform_part, fill=color, font=cuneiform_font)
             x += 220  # space for cuneiform
             if atf_part:
                 draw.text((x, y), atf_part, fill='cyan', font=font)
@@ -205,7 +213,7 @@ def generate_translation_image(sections, translations_dict, artifact_id, period,
 def translate_signs(signs, translations_dict):
     translations = []
     for sign in signs:
-        clean_sign = re.sub(r'[~#?].*', '', sign).strip('|')
+        clean_sign = re.sub(r'[~#?].*', '', sign).strip('|').upper()
         if clean_sign in translations_dict:
             translations.append(translations_dict[clean_sign])
         else:
@@ -259,7 +267,7 @@ def visualize_tablet(artifact_id):
 
     sections = parse_atf(atf_text)
 
-    # Load translations dict (simplified)
+    # Load translations dict (from manual dict and ATF map)
     translations_dict = {}
     dict_file = 'data/dictionaries/manual_sumerian_dict.txt'
     if os.path.exists(dict_file):
@@ -268,6 +276,37 @@ def visualize_tablet(artifact_id):
                 parts = line.strip().split('\t')
                 if len(parts) >= 2:
                     translations_dict[parts[0]] = parts[1]
+
+    # Also load ATF map for compounds
+    atf_map_file = 'data/dictionaries/atf_unicode_map.json'
+    if os.path.exists(atf_map_file):
+        try:
+            with open(atf_map_file, 'r') as f:
+                atf_data = json.load(f)
+                # Add compound translations
+                for compound, meaning in atf_data.get('compounds', {}).items():
+                    # For compounds, we want the translation, but the key needs to be normalized
+                    # The translate_signs function does clean_sign = re.sub(r'[~#?].*', '', sign).strip('|')
+                    # So for |(GISZX(DIN.DIN))|, it becomes (GISZX(DIN.DIN))
+                    # But we want to map |(GISZX(DIN.DIN))| to 'wall'
+                    # Actually, let me check what clean_sign produces for |(GISZx(DIN.DIN))~a|#
+                    # re.sub(r'[~#?].*', '', '|(GISZx(DIN.DIN))~a|#') = '|(GISZx(DIN.DIN))|'
+                    # Then .strip('|') = '(GISZx(DIN.DIN))'
+                    # So I need to map '(GISZX(DIN.DIN))' to 'wall' in translations_dict
+                    clean_key = re.sub(r'[~#?].*', '', compound).strip('|').upper()
+                    if compound == '|(GISZX(DIN.DIN))|':
+                        translations_dict[clean_key] = 'wall'
+                    elif clean_key not in translations_dict:  # Don't overwrite
+                        # For other compounds, use descriptive names
+                        if 'GISZ' in clean_key and 'DIN' in clean_key:
+                            translations_dict[clean_key] = 'wall'
+                        elif 'GISZ' in clean_key:
+                            translations_dict[clean_key] = 'wood/tree'
+                        elif 'DIN' in clean_key:
+                            translations_dict[clean_key] = 'life'
+                        # Add more as needed
+        except json.JSONDecodeError:
+            pass
 
     output_path = f"data/visualizations/{artifact_id}_tablet.png"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
