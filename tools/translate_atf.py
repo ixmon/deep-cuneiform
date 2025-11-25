@@ -4,20 +4,14 @@ import json
 import os
 import re
 import sys
-import xml.etree.ElementTree as ET
 
-# Add lib to path for atf2unicode
+# Add lib to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'lib'))
 
 from atf2unicode.main import atf_to_cuneiform
+from translators import detect_language
 
 # Paths
-DICT_DIR = 'data/dictionaries'
-SUMERIAN_DICT = os.path.join(DICT_DIR, 'manual_sumerian_dict.txt')
-ASSYRIAN_DICT = os.path.join(DICT_DIR, 'assyrian_dict.json')
-ATF_MAP = os.path.join(DICT_DIR, 'atf_unicode_map.json')
-EPSD_XML = os.path.join(DICT_DIR, 'epsd_data.xml')
-PROTOCUNEIFORM_SIGNS = os.path.join(DICT_DIR, 'protocuneiform_signs.csv')
 STATE_FILE = 'data/download_state.json'
 CSV_PATH = 'data/cdli-gh-data/cdli_cat.csv'
 ANNOTATIONS_DIR = 'data/annotations'
@@ -154,69 +148,32 @@ def extract_signs_from_atf_line(line):
 
     return signs
 
-def translate_atf(atf_text, language='sumerian'):
-    sumerian_dict, assyrian_dict, protocuneiform_dict, atf_map = load_dictionaries()
+def translate_atf(atf_text, language='auto', period=''):
+    """
+    Translate ATF text using appropriate translator based on language detection.
 
-    # Process ATF line by line
-    lines = atf_text.split('\n')
-    all_translations = []
+    Args:
+        atf_text (str): The ATF text to translate
+        language (str): Language override ('sumerian', 'akkadian', or 'auto' for detection)
+        period (str): Period information for language detection
 
-    for line in lines:
-        line = line.strip()
-        if not line or line.startswith('@') or line.startswith('$') or line.startswith('#'):
-            continue
+    Returns:
+        str: English translation
+    """
+    if language == 'auto':
+        translator = detect_language(atf_text, period)
+    elif language == 'sumerian':
+        from translators import SumerianTranslator
+        translator = SumerianTranslator()
+    elif language == 'akkadian':
+        from translators import AkkadianTranslator
+        translator = AkkadianTranslator()
+    else:
+        # Default to Sumerian
+        from translators import SumerianTranslator
+        translator = SumerianTranslator()
 
-        signs = extract_signs_from_atf_line(line)
-        line_translations = []
-
-        for sign in signs:
-            # Normalize sign for lookup (same as ATF parser does)
-            lookup_sign = sign
-
-            # Handle annotations at the end (same as parse_atf_expression)
-            if lookup_sign.endswith('#'):
-                lookup_sign = lookup_sign[:-1]
-            if lookup_sign.endswith('!'):
-                lookup_sign = lookup_sign[:-1]
-            if lookup_sign.endswith('*'):
-                lookup_sign = lookup_sign[:-1]
-            if lookup_sign.endswith('?'):
-                lookup_sign = lookup_sign[:-1]
-
-            # Handle variants ~a (simple strip for compounds)
-            if lookup_sign.startswith('|') and '~' in lookup_sign:
-                # Replace ~X| with | to normalize compound variants (case insensitive)
-                for var in ['~A|', '~B|', '~C|', '~D|', '~E|', '~F|', '~G|', '~H|', '~I|', '~J|', '~K|', '~L|', '~M|', '~N|', '~O|', '~P|', '~Q|', '~R|', '~S|', '~T|', '~U|', '~V|', '~W|', '~X|', '~Y|', '~Z|',
-                           '~a|', '~b|', '~c|', '~d|', '~e|', '~f|', '~g|', '~h|', '~i|', '~j|', '~k|', '~l|', '~m|', '~n|', '~o|', '~p|', '~q|', '~r|', '~s|', '~t|', '~u|', '~v|', '~w|', '~x|', '~y|', '~z|']:
-                    if var in lookup_sign:
-                        lookup_sign = lookup_sign.replace(var, '|')
-                        break
-
-            # Uppercase for lookup (ATF is case-insensitive)
-            lookup_sign = lookup_sign.upper()
-
-            # Look up in our translation maps
-            translation = None
-            if lookup_sign in atf_map:
-                translation = atf_map[lookup_sign]
-            elif lookup_sign in sumerian_dict:
-                translation = sumerian_dict[lookup_sign]
-            elif lookup_sign.startswith('M') and lookup_sign in protocuneiform_dict:
-                translation = protocuneiform_dict[lookup_sign]
-
-            if translation:
-                line_translations.append(translation)
-            else:
-                # Try the original sign
-                if sign in sumerian_dict:
-                    line_translations.append(sumerian_dict[sign])
-                else:
-                    line_translations.append(f'[{sign}]')  # Unknown
-
-        if line_translations:
-            all_translations.append(' '.join(line_translations))
-
-    return '\n'.join(all_translations)
+    return translator.translate_atf(atf_text)
 
 def determine_reading_direction(atf_text, period):
     # Basic heuristic: If @column is present, likely columnar (top to bottom per column, left to right across)
@@ -266,22 +223,27 @@ def lookup_and_translate(artifact_id, language='sumerian'):
     with open(atf_path, 'r', encoding='utf-8') as f:
         atf_text = f.read()
 
-    translation = translate_atf(atf_text, language)
+    translation = translate_atf(atf_text, language, period)
     reading_direction = determine_reading_direction(atf_text, period)
+
+    # Detect the actual language used for translation
+    translator = detect_language(atf_text, period)
+    language_name = translator.get_language_name()
 
     print(f"Artifact ID: {artifact_id}")
     print(f"ATF File: {atf_path}")
     print(f"Period: {period}")
     print(f"Reading Direction: {reading_direction}")
+    print(f"Detected Language: {language_name}")
     print(f"Original ATF:\n{atf_text}\n")
-    print(f"Attempted {language.title()} Translation:\n{translation}")
+    print(f"Attempted {language_name} Translation:\n{translation}")
 
 def main():
     parser = argparse.ArgumentParser(description='Translate ATF text or lookup by artifact ID')
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('atf_file', nargs='?', help='Path to ATF file (legacy mode)')
     group.add_argument('--artifact_id', help='Artifact ID to lookup and translate')
-    parser.add_argument('--language', choices=['sumerian', 'assyrian'], default='sumerian', help='Language for translation')
+    parser.add_argument('--language', choices=['auto', 'sumerian', 'akkadian'], default='auto', help='Language for translation (auto-detects from ATF)')
     args = parser.parse_args()
 
     if args.artifact_id:
@@ -296,8 +258,10 @@ def main():
             atf_text = f.read()
 
         translation = translate_atf(atf_text, args.language)
+        translator = detect_language(atf_text, '')
+        language_name = translator.get_language_name()
         print(f"Original ATF:\n{atf_text}\n")
-        print(f"Attempted {args.language.title()} Translation:\n{translation}")
+        print(f"Attempted {language_name} Translation:\n{translation}")
 
 if __name__ == '__main__':
     main()

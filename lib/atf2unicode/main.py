@@ -168,19 +168,27 @@ def parse_atf_expression(expr: str) -> tuple[str, list[str]]:
     expr = expr.strip()
     annotations = []
 
-    # Handle annotations at the end
-    if expr.endswith('#'):
-        annotations.append('damaged')
-        expr = expr[:-1]
-    if expr.endswith('!'):
-        annotations.append('corrected')
-        expr = expr[:-1]
-    if expr.endswith('*'):
-        annotations.append('collated')
-        expr = expr[:-1]
-    if expr.endswith('?'):
-        annotations.append('uncertain')
-        expr = expr[:-1]
+    # Handle annotations at the end (strip all markers)
+    while True:
+        stripped = False
+        if expr.endswith('#'):
+            annotations.append('damaged')
+            expr = expr[:-1]
+            stripped = True
+        if expr.endswith('!'):
+            annotations.append('corrected')
+            expr = expr[:-1]
+            stripped = True
+        if expr.endswith('*'):
+            annotations.append('collated')
+            expr = expr[:-1]
+            stripped = True
+        if expr.endswith('?'):
+            annotations.append('uncertain')
+            expr = expr[:-1]
+            stripped = True
+        if not stripped:
+            break
 
     # Handle compounds |...|
     if expr.startswith('|') and expr.endswith('|'):

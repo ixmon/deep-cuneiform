@@ -76,6 +76,7 @@ uv run python tools/translate_atf.py --id 241859 --language akkadian
 ```
 
 - **Automatic language detection** based on ATF `#atf: lang` tags and period
+- **Comprehensive Akkadian dictionary**: 7,975+ entries from SemanticDictionary project
 - **Multi-language support**: Sumerian, Akkadian, and related languages
 - **Extensible translator system** for adding new languages
 - Uses specialized dictionaries for each language (`data/dictionaries/`)
