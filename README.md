@@ -65,17 +65,20 @@ uv run python tools/lookup_cdli.py 663
 - Provides attempted Sumerian-to-English translation using dictionaries
 
 ### Translate ATF Text
-Translate raw ATF files or input using built-in dictionaries:
+Translate raw ATF files or input using built-in multi-language dictionaries:
 
 ```bash
 uv run python tools/translate_atf.py data/annotations/cdli_P000723.atf
-# Or for artifact ID:
+# Or for artifact ID with auto language detection:
 uv run python tools/translate_atf.py --id 663
+# Or specify language explicitly:
+uv run python tools/translate_atf.py --id 241859 --language akkadian
 ```
 
-- Uses manual Sumerian dictionary (`data/dictionaries/manual_sumerian_dict.txt`)
-- Supports Assyrian and proto-cuneiform signs
-- Handles compound signs and variants
+- **Automatic language detection** based on ATF `#atf: lang` tags and period
+- **Multi-language support**: Sumerian, Akkadian, and related languages
+- **Extensible translator system** for adding new languages
+- Uses specialized dictionaries for each language (`data/dictionaries/`)
 
 ### Visualize Tablets
 Generate PNG images showing tablet structure with cuneiform glyphs, ATF text, and translations:
@@ -107,16 +110,32 @@ Once sufficient data is downloaded:
 uv run python train.py
 ```
 
-## Language Coverage
+## Language Support
 
-| Flavor | Unicode Support | Works with ATF Mapper |
-|--------|-----------------|----------------------|
-| Standard Sumerian / Akkadian (Ur III, OB, etc.) | Full (U+12000–U+123FF) | YES – covers ~1,200 signs used in most ATF texts |
-| Proto-Cuneiform (ca. 3200 BCE) | No official Unicode block (only a few experimental encodings) | NO – requires LAK or ArchSign fonts + custom PUA mapping |
-| Hittite, Hurrian, etc. | Some signs overlap; many are missing | Partial – only shared signs render |
-| Emesal / Women's language | Same signs, different readings | YES – transliteration is identical |
+The system now supports multiple cuneiform languages with automatic detection:
 
-**Note**: Proto-cuneiform uses private-use area (PUA) glyphs from fonts like Santakku or LAK. The ATF mapper can be extended with a separate dict for proto signs.
+- **Sumerian**: Primary language with comprehensive dictionary
+- **Akkadian**: Semitic language using cuneiform script
+- **Auto-detection**: Based on ATF `#atf: lang` tags (sux, akk, qeb) or period metadata
+- **Extensible**: Easy to add new languages by subclassing `BaseTranslator`
+
+### Language Coverage
+
+| Language | ATF Tag | Period Support | Dictionary Status |
+|----------|---------|----------------|-------------------|
+| Sumerian | `sux` | All periods | Comprehensive (~120 signs) |
+| Akkadian | `akk` | OB, MB, NA, NB | Basic (~30 signs) |
+| Eblaite | `qeb` | Ebla | Uses Akkadian fallback |
+| Assyrian | `akk-x-stdbab` | Neo-Assyrian | Basic Akkadian support |
+
+## Unicode & Font Support
+
+| Script Type | Unicode Support | Font Status |
+|-------------|-----------------|-------------|
+| Standard Cuneiform (Sumerian/Akkadian) | Full (U+12000–U+123FF) | Noto Sans Cuneiform ✅ |
+| Proto-Cuneiform (ED IIIa/b) | PUA glyphs only | Santakku, LAK fonts ✅ |
+
+**Note**: The same Noto Sans Cuneiform font works for both Sumerian and Akkadian since they use the same cuneiform script.
 
 ## Notes
 - GPU training requires Flash Attention and CUDA libraries (auto-installed via uv).
